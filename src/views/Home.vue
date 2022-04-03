@@ -16,32 +16,46 @@
             <!-- 布局下部 -->
             <el-container>
                 <!-- 左侧边栏 -->
-                <el-aside width="200px">
+                <el-aside :width=" isCollapse ? '64px' : '200px'">
+                    <!-- 折叠按钮 -->
+                    <div class="changeAside" @click="changeAside">|||</div>
                     <el-menu
-                    class="el-menu-vertical-demo"
-                    background-color="#373d41"
-                    text-color="#fff"
-                    active-text-color="#ffd04b"
-                    unique-opened
-                    >
+                     background-color="#333744"
+                     text-color="#fff"
+                     active-text-color="#409EFF"
+                     unique-opened
+                     :collapse="isCollapse"
+                     router
+                     :default-active="activePath"
+                     >
                     <!-- 一级导航 -->
-                    <el-submenu :index="item1.id" v-for="item1 in menuList" :key="item1.id">
-                        <template slot="title">
-                            <i class="el-icon-location"></i>
-                            <span>{{item1.authName}}</span>
-                        </template>
+                        <el-submenu :index="item1.id +''" v-for="item1 in menuList" :key="item1.id">
+                            <!-- 一级标题模板 -->
+                            <template slot="title">
+                                <!-- 图标 -->
+                                <i :class=" iconsObj[item1.id] "></i>
+                                <!-- 文本 -->
+                                <span>{{item1.authName}}</span>
+                            </template>
 
-                        <!-- 二级导航 -->
-                        <el-menu-item v-for="item2 in item1.children" :key="item2.id">
-                        <template slot="title">{{item2.authName}}</template>
-                        </el-menu-item>
-                    </el-submenu>
+                            <!-- 二级导航 -->
+                            <el-menu-item :index="'/' + item2.path" v-for="item2 in item1.children" :key="item2.id"  @click="saveNavState('/' + item2.path)">
+                                <template slot="title">
+                                    <!-- 图标 -->
+                                    <i class="el-icon-menu"></i>
+                                    <!-- 文本 -->
+                                    <span>{{item2.authName}}</span> 
+                                </template>
+                            </el-menu-item>
+                        </el-submenu>
                     </el-menu>
                 </el-aside>
 
 
                 <!-- 主体内容区域 -->
-                <el-main>Main</el-main>
+                <el-main>
+                    <router-view></router-view>
+                </el-main>
             </el-container>
         </el-container>
     </div>
@@ -55,12 +69,26 @@ export default {
         return {
             // 左侧边栏数据
             menuList: [],
-            
+            // 自定义字体图标
+            iconsObj: {
+                '125': 'iconfont icon-users',
+                '103': 'iconfont icon-tijikongjian',
+                '101': 'iconfont icon-shangpin',
+                '102': 'iconfont icon-danju',
+                '145': 'iconfont icon-baobiao'
+            },
+            // 折叠侧边栏
+            isCollapse: false,
+
+            // 激活导航项的链接
+            activePath: ''
         };
     },
 
-    mounted() {
+    created() {
         this.getMenuList()
+
+        this.activePath = window.sessionStorage.getItem('activePath')
     },
 
     methods: {
@@ -80,10 +108,21 @@ export default {
                 return this.$message.error('获取左侧菜单列表失败')
             }
 
-            console.log(res.data)
+            // console.log(res.data)
 
             this.menuList = res.data
 
+        },
+
+        // 折叠侧边栏
+        changeAside() {
+            this.isCollapse = ! this.isCollapse
+        },
+
+        // 保存导航的高亮值
+        saveNavState(activePath) {
+            window.sessionStorage.setItem('activePath', activePath)
+            this.activePath = activePath
         }
         
     },
@@ -121,13 +160,29 @@ export default {
         margin-right: 20px;
     }
 }
-
-.el-menu-vertical-demo {
-    height: 100%;
-    border-right:  0;
+.el-menu {
+  border-right:  none;
 }
+
+.el-menu {
+    height: 640px;
+}
+
 .el-menu-item-group {
     font-size: 16px;
+}
+
+.iconfont {
+    padding-right: 10px;
+}
+
+.changeAside {
+    background-color: #333744;
+    text-align: center;
+    cursor: pointer;
+    font-size: 10px;
+    line-height: 24px;
+    color: #fff;
 }
 
 </style>

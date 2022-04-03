@@ -3,6 +3,8 @@ import App from './App.vue'
 import router from './router'
 // 导入全局样式
 import './assets/global.css'
+// 导入字体图标
+import './assets/fonts/iconfont.css'
 // 导入element
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
