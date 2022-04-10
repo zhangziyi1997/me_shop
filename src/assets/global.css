@@ -10,3 +10,7 @@ html,body {
 .el-breadcrumb {
     margin-bottom: 20px;
 }
+
+.el-pagination {
+    margin-bottom: 20px;
+}
